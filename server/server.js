@@ -9,7 +9,7 @@ app.use("/",(req,res,next)=>{
 })
 
 app.listen(3001,()=>{
-    console.log("server started in port 3000");
+    console.log("server started in port 3001");
 })
 
 
