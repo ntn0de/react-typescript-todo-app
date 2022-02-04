@@ -20,9 +20,28 @@ const App: React.FC = () => {
     }
   };
 
+  const ArrangeTodosList = (
+    source: Array<Todo>,
+    destination: Array<Todo>,
+    sId: number,
+    dId: number,
+    setSource: React.Dispatch<React.SetStateAction<Todo[]>>,
+    setDestination: React.Dispatch<React.SetStateAction<Todo[]>>,
+    isDone: boolean
+  ) => {
+    const sourceClone = [...source];
+    const destinationClone = [...destination];
+    // add to the destination and update destination
+    destinationClone.splice(dId, 0, sourceClone[sId]);
+    destinationClone[dId].isDone = isDone;
+    setDestination(destinationClone);
+    // delete from source and update source
+    sourceClone.splice(sId, 1);
+    setSource(sourceClone);
+  };
+
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
-    console.log({result})
     if (!destination) {
       return;
     }
@@ -32,29 +51,36 @@ const App: React.FC = () => {
     ) {
       return;
     }
-    let add,
-      active = todos,
-      complete = completedTodos;
-      console.log(active)
-      console.log(complete)
-    if (source.droppableId === "TodosList") {
-      add = active[source.index];
-      active.splice(source.index, 1);
-    } else {
-      add = complete[source.index];
-      complete.splice(source.index, 1);
+
+    if (
+      source.droppableId === "TodosList" &&
+      destination.droppableId === "TodosRemove"
+    ) {
+      ArrangeTodosList(
+        todos,
+        completedTodos,
+        source.index,
+        destination.index,
+        setTodos,
+        setCompletedTodos,
+        true
+      );
     }
-    if (destination.droppableId === "TodosList") {
-      active.splice(destination.index, 0, add);
-      active[destination.index].isDone = false;
-    } else {
-      console.log(destination.index)
-      
-      complete.splice(destination.index, 0, add);
-      complete[destination.index].isDone = true;
+
+    if (
+      destination.droppableId === "TodosList" &&
+      source.droppableId === "TodosRemove"
+    ) {
+      ArrangeTodosList(
+        completedTodos,
+        todos,
+        source.index,
+        destination.index,
+        setCompletedTodos,
+        setTodos,
+        false
+      );
     }
-    setCompletedTodos(complete);
-    setTodos(active);
   };
 
   return (

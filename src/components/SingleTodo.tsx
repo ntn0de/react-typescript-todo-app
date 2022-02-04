@@ -8,18 +8,34 @@ type Props = {
   index: number;
   todo: Todo;
   todos: Todo[];
+  completedTodos: Todo[];
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
+  setCompletedTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
 };
 
-const SingleTodo: React.FC<Props> = ({ index, todo, todos, setTodos }) => {
+const SingleTodo: React.FC<Props> = ({
+  index,
+  todo,
+  todos,
+  completedTodos,
+  setTodos,
+  setCompletedTodos,
+}) => {
   const [edit, setEdit] = useState<Boolean>(false);
   const [editTodo, setEditTodo] = useState<string>(todo.todo);
   const handleDone = (id: number) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, isDone: !todo.isDone } : todo
-      )
-    );
+    let newTodos: Todo[] = [];
+    todos.forEach((todo) => {
+      if (todo.id === id) {
+        setCompletedTodos([
+          ...completedTodos,
+          { ...todo, isDone: true },
+        ]);
+      } else {
+        newTodos.push(todo);
+      }
+    });
+    setTodos(newTodos);
   };
   const handleDelete = (id: number) => {
     setTodos(todos.filter((todo) => todo.id !== id));
