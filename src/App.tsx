@@ -22,6 +22,7 @@ const App: React.FC = () => {
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
+    console.log({result})
     if (!destination) {
       return;
     }
@@ -45,8 +46,12 @@ const App: React.FC = () => {
     }
     if (destination.droppableId === "TodosList") {
       active.splice(destination.index, 0, add);
+      active[destination.index].isDone = false;
     } else {
+      console.log(destination.index)
+      
       complete.splice(destination.index, 0, add);
+      complete[destination.index].isDone = true;
     }
     setCompletedTodos(complete);
     setTodos(active);
@@ -55,7 +60,7 @@ const App: React.FC = () => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="App">
-        <div className="heading">Taskify</div>
+        <div className="heading">To Dos</div>
         <InputField todo={todo} setTodo={setTodo} handleAdd={handleAdd} />
         <TodoList
           todos={todos}
